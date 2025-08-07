@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# VSCode settings
+.vscode/
+
+# Python environment variables file
+.env
+
+# Uvicorn reload files (if any)
+*.log
+
+# MacOS files
+.DS_Store
+
+# SQLite database file (if you add one later)
+*.db
