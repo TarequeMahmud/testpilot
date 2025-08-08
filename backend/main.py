@@ -1,9 +1,8 @@
-# main.py
 from fastapi import FastAPI
+
+from api import route_test_summery
 
 app = FastAPI()
 
 
-@app.get("/")
-async def read_root():
-    return {"message": "Hello World"}
+app.include_router(route_test_summery.router)

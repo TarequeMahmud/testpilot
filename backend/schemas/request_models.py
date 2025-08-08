@@ -5,7 +5,7 @@ class FilePayload(BaseModel):
     filename: str
     content: str
 
-class SummeryRequest(FilePayload):
+class SummeryRequest(BaseModel):
     files: list[FilePayload]
 
 class GenerateCodeRequest(FilePayload):
