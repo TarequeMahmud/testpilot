@@ -1,14 +1,14 @@
 import json
 from fastapi import APIRouter
 
-from schemas.request_models import SummeryRequest
+from schemas.request_models import SummaryRequest
 from services.gemini_service import call_gemini
 
 
 router = APIRouter()
 
 @router.post('/generate-test-summeries')
-async def generate_test_summeries(req:SummeryRequest):
+async def generate_test_summeries(req:SummaryRequest):
     combined_text = "\n\n".join([f"# f{f.filename}\n{f.content}" for f in req.files])
 
     prompt = f"""
