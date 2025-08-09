@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 
-from api import test_code_route, test_summary_route
-
-
+from api import github_route, test_route
 
 app = FastAPI()
 
-
-app.include_router(test_summary_route.router)
-app.include_router(test_code_route.router)
+app.include_router(github_route.router)
+app.include_router(test_route.router)
