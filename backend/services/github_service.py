@@ -1,16 +1,25 @@
-import httpx
-from core.config import GITHUB_TOKEN
+from core.utils import fetch_from_github_api
 
 
 BASE_URL = "https://api.github.com"
 
+
 async def list_repos(username:str):
     url = f"{BASE_URL}/users/{username}/repos"
-    headers = {
-        "Authorization":f"token {GITHUB_TOKEN}",
-         "Accept": "application/vnd.github.v3+json"
-    }
-    async with httpx.AsyncClient() as client:
-        res = await client.get(url, headers=headers)
-        data = res.json()
-        return [{"name": r["name"], "full_name":r["full_name"], "private":r["private"]} for r in data]
+    data = await fetch_from_github_api(url)
+    return [{"name": r["name"], "full_name":r["full_name"], "private":r["private"]} for r in data]
+    
+
+async def list_repo_file(owner:str, repo:str, path:str=""):
+    url = f"{BASE_URL}/repos/{owner}/{repo}/contents/{path}"
+    data = await fetch_from_github_api(url)
+    
+    return [
+        {
+            "name": item["name"],
+            "path": item["path"],
+            "type": item["type"] 
+        }
+        for item in data
+    ]
+
