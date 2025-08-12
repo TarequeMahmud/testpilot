@@ -1,16 +1,18 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios";
+import Spinner from "@/components/Spinner";
 
 interface FileNode {
   name: string;
   path: string;
+  full_path: string;
   type: "file" | "dir";
   children?: FileNode[];
 }
 
 interface ShowRepoContentProps {
   data: FileNode[];
-  onSendToApi: (files: FileNode[]) => void; // New prop for sending selected files
 }
 
 const TreeNode: React.FC<{
@@ -56,29 +58,24 @@ const TreeNode: React.FC<{
   );
 };
 
-const ShowRepoContent: React.FC<ShowRepoContentProps> = ({
-  data,
-  onSendToApi,
-}) => {
+const ShowRepoContent: React.FC<ShowRepoContentProps> = ({ data }) => {
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
   const [selectedFiles, setSelectedFiles] = useState<FileNode[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const toggleSelect = (file: FileNode, checked: boolean) => {
     setSelectedPaths((prev) => {
       const newSet = new Set(prev);
-
       if (checked) {
         newSet.add(file.path);
       } else {
         newSet.delete(file.path);
       }
-
       return newSet;
     });
 
     setSelectedFiles((prevFiles) => {
       if (checked) {
-        // Avoid duplicates
         if (!prevFiles.some((f) => f.path === file.path)) {
           return [...prevFiles, file];
         }
@@ -89,10 +86,39 @@ const ShowRepoContent: React.FC<ShowRepoContentProps> = ({
     });
   };
 
+  const handleSend = async () => {
+    if (selectedFiles.length === 0) return;
+
+    const payload = {
+      files: selectedFiles.map((file) => ({
+        filename: file.name,
+        path: file.path,
+        full_path: file.full_path,
+      })),
+    };
+
+    console.log(payload);
+
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "http://localhost:8000/generate/test-summaries",
+        payload
+      );
+      console.log("API Response:", response.data);
+      alert("Files sent successfully!");
+    } catch (error) {
+      console.error("Error sending files:", error);
+      alert("Failed to send files. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="text-white p-4 rounded-lg max-h-[500px] overflow-auto w-full">
       <h2 className="text-lg font-bold text-center">
-        Select one or more files to Generate Test Cases summeries
+        Select one or more files to Generate Test Case summaries
       </h2>
       <hr className="mb-4" />
       {data.map((node) => (
@@ -105,11 +131,11 @@ const ShowRepoContent: React.FC<ShowRepoContentProps> = ({
       ))}
 
       <button
-        onClick={() => onSendToApi(selectedFiles)}
-        className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-500 rounded"
-        disabled={selectedFiles.length === 0}
+        onClick={handleSend}
+        className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-500 rounded disabled:opacity-50"
+        disabled={loading || selectedFiles.length === 0}
       >
-        Send {selectedFiles.length} file(s) to API
+        {loading ? <Spinner /> : `Send ${selectedFiles.length} file(s) to API`}
       </button>
     </div>
   );

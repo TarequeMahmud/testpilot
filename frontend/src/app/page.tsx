@@ -10,7 +10,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [repos, setRepos] = useState<any[]>([]);
   const [repoContents, setRepoContents] = useState<any[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
 
   return (
     <div className="font-sans flex flex-col justify-start items-center min-h-screen p-2 pb-20 gap-2 sm:p-4">
@@ -54,12 +53,7 @@ export default function Home() {
         )}
 
         {/* Step 3: Show Repo Contents */}
-        {repoContents.length > 0 && (
-          <ShowRepoContent
-            data={repoContents}
-            onSendToApi={() => setSelectedFiles([])} // Optional "back" button
-          />
-        )}
+        {repoContents.length > 0 && <ShowRepoContent data={repoContents} />}
 
         {/* Generate Test cases for selected files*/}
       </Card>
