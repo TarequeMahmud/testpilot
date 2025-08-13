@@ -13,6 +13,7 @@ interface FileNode {
 
 interface ShowRepoContentProps {
   data: FileNode[];
+  setTestSummaries: (summaries: any[]) => void;
 }
 
 const TreeNode: React.FC<{
@@ -24,7 +25,7 @@ const TreeNode: React.FC<{
 
   if (node.type === "dir") {
     return (
-      <div className="ml-4">
+      <div className="ml-4 h-full">
         <div
           onClick={() => setExpanded(!expanded)}
           className="cursor-pointer text-blue-400 hover:text-blue-300 font-bold"
@@ -58,7 +59,10 @@ const TreeNode: React.FC<{
   );
 };
 
-const ShowRepoContent: React.FC<ShowRepoContentProps> = ({ data }) => {
+const ShowRepoContent: React.FC<ShowRepoContentProps> = ({
+  data,
+  setTestSummaries,
+}) => {
   const [selectedPaths, setSelectedPaths] = useState<Set<string>>(new Set());
   const [selectedFiles, setSelectedFiles] = useState<FileNode[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,7 +110,7 @@ const ShowRepoContent: React.FC<ShowRepoContentProps> = ({ data }) => {
         payload
       );
       console.log("API Response:", response.data);
-      alert("Files sent successfully!");
+      setTestSummaries(response.data.summaries || []);
     } catch (error) {
       console.error("Error sending files:", error);
       alert("Failed to send files. Check console for details.");
@@ -116,7 +120,7 @@ const ShowRepoContent: React.FC<ShowRepoContentProps> = ({ data }) => {
   };
 
   return (
-    <div className="text-white p-4 rounded-lg max-h-[500px] overflow-auto w-full">
+    <div className="text-white p-4 rounded-lg h-auto w-full">
       <h2 className="text-lg font-bold text-center">
         Select one or more files to Generate Test Case summaries
       </h2>

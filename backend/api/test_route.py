@@ -17,13 +17,14 @@ async def generate_test_summaries(req: SummaryRequest):
         if content_data:
             files_with_content.append({
                 "filename": file.filename,
-                "content": content_data["content"]
+                "content": content_data["content"],
+                "full_path": file.full_path
             })
 
-    combined_text = "\n\n".join([f"# {f['filename']}\n{f['content']}" for f in files_with_content])
+    combined_text = "\n\n".join([f"# {f['filename']}\n{f['content']}\n{f['full_path']}" for f in files_with_content])
 
     prompt = f"""
-You are a software test analyst. Analyze the following code files and generate a list of test case summaries in JSON array format. Do NOT add any explanations or markdown.
+You are a software test analyst. Analyze the following code files and generate a list of test case summaries in JSON array format. Do NOT add any explanations or markdown. for every summary, structure should be like {{filename: string,  summary:string, full_path:string}}
 
 Code:
 {combined_text}
