@@ -41,15 +41,21 @@ Code:
 
 @router.post("/test-code")
 async def generate_test_code(req:GenerateCodeRequest):
+    file_content = await fetch_file_content(req.file.full_path)
     prompt = f"""
-You are a unit test generator. Based on the test case summary below and the code, generate a complete test case using pytest and httpx for FastAPI.
+You are a unit test generator. Based on the test case summary below and the code, generate a complete test case using pytest and httpx for FastAPI. It can be any test cases like Junit for React, selenium for python automation testing.  response structure should be {{test_filename: string,  code:string, full_path:string}}. don't wrap the object you give with anything, even not with json``````; just give as raw string. full path must be for the test file- not original file, and it should be in the folder original file resides.
 
 Test Case Summary:
 {req.summary}
 
 Code:
-#{req.file.filename}
-{req.file.content}
+#file name: {req.file.filename}
+#file full path: {req.file.full_path}
+{file_content}
 """
     code : str = await call_gemini(prompt)
-    return {"test_code": code}
+    try:
+        test_case = json.loads(code.strip())
+    except json.JSONDecodeError:
+        test_case = {"error": "Failed to generate test code"}
+    return {"test_code": test_case}

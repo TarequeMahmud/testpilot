@@ -12,11 +12,7 @@ export default function Home() {
   const [repos, setRepos] = useState<any[]>([]);
   const [repoContents, setRepoContents] = useState<any[]>([]);
   const [testSummaries, setTestSummaries] = useState<any[]>([]);
-
-  const handleSummarySelect = (summary: any) => {
-    console.log("User selected summary:", summary);
-    // Here you'd trigger API to generate test code for the selected summary
-  };
+  const [generatedTest, setGeneratedTest] = useState<any>({});
 
   return (
     <div className="font-sans flex flex-col justify-start items-center min-h-screen p-2 pb-20 gap-2 sm:p-4">
@@ -42,7 +38,8 @@ export default function Home() {
           <TestSummaries
             summaries={testSummaries}
             loading={loading}
-            onSummarySelect={handleSummarySelect}
+            setLoading={setLoading}
+            setGeneratedTest={setGeneratedTest}
           />
         ) : repos.length === 0 ? (
           <FindGitUser
