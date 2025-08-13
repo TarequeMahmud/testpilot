@@ -139,7 +139,11 @@ const ShowRepoContent: React.FC<ShowRepoContentProps> = ({
         className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-500 rounded disabled:opacity-50"
         disabled={loading || selectedFiles.length === 0}
       >
-        {loading ? <Spinner /> : `Send ${selectedFiles.length} file(s) to API`}
+        {loading ? (
+          <Spinner />
+        ) : (
+          `Send ${selectedFiles.length} file(s) to AI to Generate Test Case Summaries`
+        )}
       </button>
     </div>
   );
