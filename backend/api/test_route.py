@@ -1,5 +1,7 @@
+from ast import parse
 import json
 
+from core.utils import parse_ai_json
 from services.github_service import fetch_file_content
 from fastapi import APIRouter
 from schemas.request_models import GenerateCodeRequest, SummaryRequest
@@ -43,19 +45,37 @@ Code:
 async def generate_test_code(req:GenerateCodeRequest):
     file_content = await fetch_file_content(req.file.full_path)
     prompt = f"""
-You are a unit test generator. Based on the test case summary below and the code, generate a complete test case using pytest and httpx for FastAPI. It can be any test cases like Junit for React, selenium for python automation testing.  response structure should be {{test_filename: string,  code:string, full_path:string}}. don't wrap the object you give with anything, even not with json``````; just give as raw string. full path must be for the test file- not original file, and it should be in the folder original file resides.
+    You are an expert unit test generator. 
 
-Test Case Summary:
-{req.summary}
+    Your task:
+    - Generate a complete unit test based on the provided code and test case summary.
+    - The test can be in any framework appropriate for the language (e.g., pytest + httpx for FastAPI, JUnit for Java, Selenium for Python automation, Jest for React, etc.).
+    - The response must be **only valid JSON** in the following structure:
 
-Code:
-#file name: {req.file.filename}
-#file full path: {req.file.full_path}
-{file_content}
-"""
+    {{
+        "test_filename": string,  // name of the test file
+        "code": string,           // full code of the test file
+        "full_path": string       // full path for the test file (must be in the same folder as the original file)
+    }}
+
+    Important:
+    - Do NOT include any explanations, markdown, or additional text.
+    - The JSON must be fully parseable by `json.loads()`.
+
+    Test Case Summary:
+    {req.summary}
+
+    Original Code:
+    # File name: {req.file.filename}
+    # Full path: {req.file.full_path}
+
+    {file_content}
+    """
+
     code : str = await call_gemini(prompt)
+    print("Generated code:", code)
     try:
-        test_case = json.loads(code.strip())
+        test_case = parse_ai_json(code)
     except json.JSONDecodeError:
         test_case = {"error": "Failed to generate test code"}
     return {"test_code": test_case}

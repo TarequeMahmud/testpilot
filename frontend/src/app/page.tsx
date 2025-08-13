@@ -5,6 +5,7 @@ import FindGitUser from "@/components/FindGitUser";
 import ShowInList from "@/components/ShowInList";
 import ShowRepoContent from "@/components/showRepoContent";
 import TestSummaries from "@/components/TestSummaries";
+import ShowTestCode from "@/components/ShowTestCode";
 
 export default function Home() {
   const [username, setUsername] = useState<string>("");
@@ -12,7 +13,7 @@ export default function Home() {
   const [repos, setRepos] = useState<any[]>([]);
   const [repoContents, setRepoContents] = useState<any[]>([]);
   const [testSummaries, setTestSummaries] = useState<any[]>([]);
-  const [generatedTest, setGeneratedTest] = useState<any>({});
+  const [generatedTest, setGeneratedTest] = useState<any | null>(null);
 
   return (
     <div className="font-sans flex flex-col justify-start items-center min-h-screen p-2 pb-20 gap-2 sm:p-4">
@@ -26,6 +27,7 @@ export default function Home() {
             setRepos([]);
             setRepoContents([]);
             setTestSummaries([]);
+            setGeneratedTest(null);
             setLoading(false);
           }}
         >
@@ -34,7 +36,13 @@ export default function Home() {
       </div>
 
       <Card>
-        {testSummaries.length > 0 ? (
+        {generatedTest ? (
+          <ShowTestCode
+            generatedTest={generatedTest}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        ) : testSummaries.length > 0 ? (
           <TestSummaries
             summaries={testSummaries}
             loading={loading}

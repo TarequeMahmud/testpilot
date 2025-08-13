@@ -9,12 +9,12 @@ const Card = ({ children }: AuthCardProps) => {
   return (
     <div
       className={clsx(
-        "flex flex-col justify-center items-center w-full md:px-10 md:w-[60%] h-auto min-h-full"
+        "flex flex-col justify-center items-center w-full md:px-10 md:w-[80%] h-auto min-h-full"
       )}
     >
       <div
         className={clsx(
-          "flex flex-col justify-center items-center w-[97%] md:w-[600px]  h-auto px-5 md:px-10 bg-[#0000005f] rounded-xl shadow-lg my-4 pt-3 pb-8"
+          "flex flex-col justify-center items-center w-[97%] h-auto px-5 md:px-10 bg-[#0000005f] rounded-xl shadow-lg my-4 pt-3 pb-8"
         )}
       >
         {children}

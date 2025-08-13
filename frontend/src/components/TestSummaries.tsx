@@ -38,6 +38,7 @@ const TestSummaries: React.FC<TestSummariesProps> = ({
         requestBody
       );
 
+      console.log("Generated test code:", response.data);
       setGeneratedTest?.(response.data.test_code);
     } catch (error) {
       console.error("Error generating code:", error);
